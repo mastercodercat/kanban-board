@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Workspace {
+  id     Int     @id @default(autoincrement())
+  name   String
+  users  User[]
+  stages Stage[]
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  name        String?
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+}
+
+model Stage {
+  id            Int           @id @default(autoincrement())
+  name          String
+  position      Float
+  workspace     Workspace     @relation(fields: [workspaceId], references: [id])
+  workspaceId   Int
+  opportunities Opportunity[]
+}
+
+model Opportunity {
+  id       Int    @id @default(autoincrement())
+  name     String
+  position Float
+  stage    Stage  @relation(fields: [stageId], references: [id])
+  stageId  Int
+}
